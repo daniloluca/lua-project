@@ -22,7 +22,7 @@ local data = {
 function print_t(t)
 	local s = {"return {\n"}
 	for i=1,#t do
-	  s[#s+1] = "\t{"
+	  s[#s+1] = "  {"
 	  for j=1,#t[i] do
 	    s[#s+1] = t[i][j]
 	    s[#s+1] = ","
@@ -35,7 +35,29 @@ function print_t(t)
 	print(s)
 end
 
-local a, b = ml.devideset(data, 4, 20)
+function print_k(t)
+	print("{")
+	for k, v in pairs(t) do
+		print("  " .. k .. ": " .. v .. ",")
+	end
+	print("}")
+end
 
-print_t(a)
-print_t(b)
+-- local a, b = ml.divideset(data, 4, 20)
+
+-- print_t(a)
+-- print_t(b)
+
+-- print_k(ml.uniquecounts(data));
+
+-- local a, b = ml.divideset(data,4,20)
+-- print_t(a)
+-- print_k(ml.uniquecounts(a))
+-- print("")
+-- print_t(b)
+-- print_k(ml.uniquecounts(b))
+
+-- local set1, set2=ml.divideset(data,4,20)
+-- print(ml.entropy(set1), ml.entropy(set2))
+
+print(ml.entropy(data))
