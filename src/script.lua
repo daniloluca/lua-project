@@ -43,6 +43,18 @@ function print_k(t)
 	print("}")
 end
 
+function printtree(tree)
+	if tree.results ~= nil then
+		print(tostring(tree.results))
+	else
+		print(tostring(tree.col)..":"..tostring(tree.value).."? ")
+		print(" T->  ")
+		printtree(tree.tb, "   ")
+		print(indent.."F->  ")
+		printtree(tree.fb, "   ")
+	end
+end
+
 -- local a, b = ml.divideset(data, 4, 20)
 
 -- print_t(a)
@@ -60,4 +72,24 @@ end
 -- local set1, set2=ml.divideset(data,4,20)
 -- print(ml.entropy(set1), ml.entropy(set2))
 
-print(ml.entropy(data))
+-- print(ml.entropy(data))
+
+
+local tree=ml.buildtree(data)
+
+printtree(tree);
+-- print(tree.col)
+-- print(tree.value)
+-- print(tree.results)
+-- print("")
+-- print(tree.tb.col)
+-- print(tree.tb.value)
+-- print(tree.tb.results)
+-- print("")
+-- print(tree.tb.tb.col)
+-- print(tree.tb.tb.value)
+-- print(tree.tb.tb.results)
+-- print("")
+-- print(tree.tb.fb.col)
+-- print(tree.tb.fb.value)
+-- print(tree.tb.fb.results)
