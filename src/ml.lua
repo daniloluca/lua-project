@@ -50,7 +50,7 @@ function multiple(sets)
 	return entr
 end
 
-function ml.divide(node, branch, cond)
+function divide(node, branch, cond)
 	local split
 	if type(cond) == "number" then
 		split = function(set)
@@ -75,12 +75,21 @@ function ml.divide(node, branch, cond)
 	return sett, setf
 end
 
-function ml.gain(s, m)
+function gain(s, m)
 	return single(s) - multiple(m)
 end
 
 function ml.tree(features, labels)
-
+	local data = {}
+	for i=1, #features do
+		for j=1, #features[i] do
+			if data[j] == nil then
+				data[j] = {}
+			end
+			data[i][features[i][j]][#data[i][features[i][j]]+1] = labels[i]
+		end
+	end
+	return data
 end
 
 return ml

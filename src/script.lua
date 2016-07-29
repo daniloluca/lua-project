@@ -49,8 +49,6 @@ end
 -- print_t(a)
 -- print_t(b)
 
-local s = {9, 5}
-local m = {{2, 3}, {4, 0}, {3, 2}}
-local a = ml.gain(s, m)
+local a = ml.tree(features, labels)
 
-print(a)
+print_k(a)
