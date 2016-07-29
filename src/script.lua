@@ -43,12 +43,24 @@ function print_k(t)
 	print("}")
 end
 
+function print_d(data)
+	for ki, vi in pairs(data) do
+		print("-> "..ki)
+		for kj, vj in pairs(vi) do
+			print("  -> "..kj)
+			for kz, vz in pairs(vj) do
+				print("    ->"..vz)
+			end
+		end
+	end
+end
+
 -- output
 -- local a, b = ml.divide(features, 1, "Sunny")
 --
 -- print_t(a)
 -- print_t(b)
 
-local a = ml.tree(features, labels)
+local a = ml.parse(features, labels)
 
-print_k(a)
+print_d(a)

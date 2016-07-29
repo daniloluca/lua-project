@@ -79,14 +79,15 @@ function gain(s, m)
 	return single(s) - multiple(m)
 end
 
-function ml.tree(features, labels)
+function ml.parse(features, labels)
 	local data = {}
-	for i=1, #features do
-		for j=1, #features[i] do
-			if data[j] == nil then
-				data[j] = {}
+	for i=1, #features[1] do
+		data[i] = {}
+		for j=1, #features do
+			if data[i][features[j][i]] == nil then
+				data[i][features[j][i]] = {}
 			end
-			data[i][features[i][j]][#data[i][features[i][j]]+1] = labels[i]
+			data[i][features[j][i]][#data[i][features[j][i]]+1] = labels[j]
 		end
 	end
 	return data
