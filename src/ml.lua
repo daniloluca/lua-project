@@ -79,7 +79,7 @@ function gain(s, m)
 	return single(s) - multiple(m)
 end
 
-function ml.parse(features, labels)
+function parse(features, labels)
 	local data = {}
 	for i=1, #features[1] do
 		data[i] = {}
@@ -91,6 +91,58 @@ function ml.parse(features, labels)
 		end
 	end
 	return data
+end
+
+function toSingle(input)
+	local s = {}
+	for ki, vi in pairs(input) do
+		for kj, vj in pairs(vi) do
+			if s[vj] == nil then
+				s[vj] = 0
+			end
+			s[vj] = s[vj] + 1
+		end
+	end
+
+	local single = {}
+	for k, v in pairs(s) do
+		single[#single+1] = v
+	end
+
+	return single
+end
+
+function toMultiple(input)
+	local m = {}
+	for ki, vi in pairs(input) do
+		m[#m+1] = {}
+		for kj, vj in pairs(vi) do
+			if m[#m][vj] == nil then
+				m[#m][vj] = 0
+			end
+			m[#m][vj] = m[#m][vj] + 1
+		end
+	end
+
+	local multiple = {}
+	for ki, vi in pairs(m) do
+		multiple[#multiple+1] = {}
+		for kj, vj in pairs(vi) do
+			multiple[#multiple][#multiple[#multiple]+1] = vj
+		end
+	end
+
+	return multiple
+end
+
+function ml.tree(features, labels)
+	local inputs = parse(features, labels)
+
+	for k, v in pairs(inputs) do
+		print(k.." -> "..gain(toSingle(v), toMultiple(v)))
+	end
+
+	return a
 end
 
 return ml

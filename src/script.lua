@@ -61,6 +61,6 @@ end
 -- print_t(a)
 -- print_t(b)
 
-local a = ml.parse(features, labels)
+local a = ml.tree(features, labels)
 
-print_d(a)
+-- print_k(a)
