@@ -63,4 +63,4 @@ end
 
 local a = ml.tree(features, labels)
 
--- print_k(a)
+print_t(a)

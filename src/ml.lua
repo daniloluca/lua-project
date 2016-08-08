@@ -7,6 +7,15 @@ function log(x)
 	return math.log(x)/math.log(2)
 end
 
+function concat(a, b)
+	if b ~= nil then
+		for i=1, #b do
+			a[i][#a[i]+1] = b[i]
+		end
+	end
+	return a
+end
+
 function entropy(set)
 	local entr = 0
 	for key, value in pairs(set) do
@@ -135,14 +144,12 @@ function toMultiple(input)
 	return multiple
 end
 
+function build(features)
+	return features
+end
+
 function ml.tree(features, labels)
-	local inputs = parse(features, labels)
-
-	for k, v in pairs(inputs) do
-		print(k.." -> "..gain(toSingle(v), toMultiple(v)))
-	end
-
-	return a
+	return build(concat(features, labels))
 end
 
 return ml
