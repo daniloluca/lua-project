@@ -24,39 +24,39 @@ function entropy(set)
 	return entr
 end
 
-function single(set)
-	local size = 0
-	for key, value in pairs(set) do
-		size = size + value
-	end
-
-	local _set = {}
-	for key, value in pairs(set) do
-		_set[#_set+1] = value/size
-	end
-	return entropy(_set)
-end
-
-function multiple(sets)
-	local _sets = {}
-	local size = 0
-	for ki, vi in pairs(sets) do
-		_sets[#_sets+1] = {
-			entr = single(vi),
-			size = 0
-		}
-		for kj, vj in pairs(vi) do
-			_sets[#_sets].size = _sets[#_sets].size + vj
+function info(set)
+	if type(set[1]) == "table" then
+		local _set = {}
+		local size = 0
+		for ki, vi in pairs(set) do
+			_set[#_set+1] = {
+				entr = info(vi),
+				size = 0
+			}
+			for kj, vj in pairs(vi) do
+				_set[#_set].size = _set[#_set].size + vj
+			end
+			size = size + _set[#_set].size
 		end
-		size = size + _sets[#_sets].size
-	end
 
-	local entr = 0
-	for k, v in pairs(_sets) do
-		entr = entr + ((v.size/size)*v.entr)
-	end
+		local entr = 0
+		for k, v in pairs(_set) do
+			entr = entr + ((v.size/size)*v.entr)
+		end
 
-	return entr
+		return entr
+	else
+		local size = 0
+		for key, value in pairs(set) do
+			size = size + value
+		end
+
+		local _set = {}
+		for key, value in pairs(set) do
+			_set[#_set+1] = value/size
+		end
+		return entropy(_set)
+	end
 end
 
 function divide(node, branch, cond)
@@ -84,67 +84,15 @@ function divide(node, branch, cond)
 	return sett, setf
 end
 
-function gain(s, m)
-	return single(s) - multiple(m)
-end
-
-function parse(features, labels)
-	local data = {}
-	for i=1, #features[1] do
-		data[i] = {}
-		for j=1, #features do
-			if data[i][features[j][i]] == nil then
-				data[i][features[j][i]] = {}
-			end
-			data[i][features[j][i]][#data[i][features[j][i]]+1] = labels[j]
-		end
-	end
-	return data
-end
-
-function toSingle(input)
-	local s = {}
-	for ki, vi in pairs(input) do
-		for kj, vj in pairs(vi) do
-			if s[vj] == nil then
-				s[vj] = 0
-			end
-			s[vj] = s[vj] + 1
-		end
-	end
-
-	local single = {}
-	for k, v in pairs(s) do
-		single[#single+1] = v
-	end
-
-	return single
-end
-
-function toMultiple(input)
-	local m = {}
-	for ki, vi in pairs(input) do
-		m[#m+1] = {}
-		for kj, vj in pairs(vi) do
-			if m[#m][vj] == nil then
-				m[#m][vj] = 0
-			end
-			m[#m][vj] = m[#m][vj] + 1
-		end
-	end
-
-	local multiple = {}
-	for ki, vi in pairs(m) do
-		multiple[#multiple+1] = {}
-		for kj, vj in pairs(vi) do
-			multiple[#multiple][#multiple[#multiple]+1] = vj
-		end
-	end
-
-	return multiple
+function gain(s, a)
+	return info(s) - info(a)
 end
 
 function build(features)
+
+	print(info({3, 2}))
+	print(info({{3, 2}, {4, 0}, {2, 3}}))
+
 	return features
 end
 
