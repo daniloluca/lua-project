@@ -88,10 +88,49 @@ function gain(s, a)
 	return info(s) - info(a)
 end
 
-function build(features)
+function getSet(rows)
+	local set = {}
+	for k, row in pairs(rows) do
+		if set[row[#row]] == nil then
+			set[row[#row]] = 0
+		end
+		set[row[#row]] = set[row[#row]] + 1
+	end
 
-	print(info({3, 2}))
+	local _set = {}
+	for k, v in pairs(set) do
+		_set[#_set+1] = v
+		print(v);
+	end
+
+	return _set
+end
+
+function build(rows)
+
+	print(info({9, 5}))
 	print(info({{3, 2}, {4, 0}, {2, 3}}))
+	print(gain({9, 5}, {{3, 2}, {4, 0}, {2, 3}}))
+
+
+	local best_gain = 0
+  	local best_criteria
+  	local best_sets = {}
+
+	for col=1, #rows[1]-1 do
+
+		local column_values = {}
+		for k, row in pairs(rows) do
+			column_values[row[col]] = 1
+		end
+
+		for k, value in pairs(column_values) do
+			local set1, set2 = divide(rows, col, value)
+
+			local p = float(len(set1))/len(rows)
+			local gain = current_score-p*scoref(set1)-(1-p)*scoref(set2)
+		end
+	end
 
 	return features
 end
