@@ -88,7 +88,7 @@ function gain(s, a)
 	return info(s) - info(a)
 end
 
-function getSet(rows)
+function quantify(rows)
 	local set = {}
 	for k, row in pairs(rows) do
 		if set[row[#row]] == nil then
@@ -100,18 +100,13 @@ function getSet(rows)
 	local _set = {}
 	for k, v in pairs(set) do
 		_set[#_set+1] = v
-		print(v);
 	end
 
 	return _set
 end
 
 function build(rows)
-
-	print(info({9, 5}))
-	print(info({{3, 2}, {4, 0}, {2, 3}}))
-	print(gain({9, 5}, {{3, 2}, {4, 0}, {2, 3}}))
-
+	local set_s = quantify(rows)
 
 	local best_gain = 0
   	local best_criteria
@@ -124,13 +119,20 @@ function build(rows)
 			column_values[row[col]] = 1
 		end
 
-		for k, value in pairs(column_values) do
-			local set1, set2 = divide(rows, col, value)
+		local set_a = {}
+		for key, value in pairs(column_values) do
+			local set1, set2 = divide(rows, col, key)
 
-			local p = float(len(set1))/len(rows)
-			local gain = current_score-p*scoref(set1)-(1-p)*scoref(set2)
+			set_a[#set_a+1] = quantify(set1)
+		end
+
+		local g = gain(set_s, set_a)
+		if g > best_gain then
+			best_gain = g
 		end
 	end
+
+	print(best_gain)
 
 	return features
 end
