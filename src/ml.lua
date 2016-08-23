@@ -104,77 +104,87 @@ function divide(node, branch, cond)
 	return sett, setf
 end
 
-function build(rows)
-	if #rows == 0 then
+function build(table)
+	if #table == 0 then
 		return {}
 	end
 
-	local current_score = info(quantify(rows))
+	local original_gain = info(quantify(table))
 
-	local best_gain = 0
-  	local best_criteria = {}
-  	local best_sets = {}
+	local max_gain = 0
+  	local max_feature = {}
+  	local max_sets = {}
 
-	for col=1, #rows[1]-1 do
+	for col=1, #table[1]-1 do
 
-		local column_values = {}
-		for k, row in pairs(rows) do
-			column_values[row[col]] = 1
+		local keys = {}
+		for k, row in pairs(table) do
+			keys[row[col]] = 1
 		end
 
-		for key, value in pairs(column_values) do
-			local set1, set2 = divide(rows, col, key)
+		for key, value in pairs(keys) do
+			local set_true, set_false = divide(table, col, key)
 
-			local p = #set1/#rows
-			local gain = current_score-p*info(quantify(set1))-(1-p)*info(quantify(set2))
+			local p = #set_true/#table
+			local gain = original_gain-p*info(quantify(set_true))-(1-p)*info(quantify(set_false))
 
-			if gain > best_gain and #set1 > 0 and #set2 > 0 then
-				best_gain = gain
-				best_criteria = {col, key}
-				best_sets = {set1, set2}
+			if gain > max_gain and #set_true > 0 and #set_false > 0 then
+				max_gain = gain
+				max_feature = {col, key}
+				max_sets = {set_true, set_false}
 			end
 		end
 	end
 
-	if best_gain > 0 then
+	if max_gain > 0 then
 		return {
-			col = best_criteria[1],
-			value = best_criteria[2],
-			tb = build(best_sets[1]),
-			fb = build(best_sets[2])
+			col = max_feature[1],
+			cond = max_feature[2],
+			true_b = build(max_sets[1]),
+			false_b = build(max_sets[2])
 		}
 	else
 		return {
-			results = getLabels(rows)
+			result = getLabels(table)
 		}
 	end
 end
 
-function ml.tree(features, labels)
-	return build(concat(features, labels))
-end
-
-function ml.run(tree, features)
-	if tree.results ~= nil then
-		return tree.results
+function run(tree, features)
+	if tree.result ~= nil then
+		return tree.result
 	else
-		local v = features[tree.col]
+		local value = features[tree.col]
 		local branch = {}
-		if type(v) == "number" then
-			if v >= tree.value then
-				branch = tree.tb
+		if type(value) == "number" then
+			if value >= tree.cond then
+				branch = tree.true_b
 			else
-				branch = tree.fb
+				branch = tree.false_b
 			end
 		else
-			if v == tree.value then
-				branch = tree.tb
+			if value == tree.cond then
+				branch = tree.true_b
 			else
-				branch = tree.fb
+				branch = tree.false_b
 			end
 		end
-		return ml.run(branch, features)
+		return run(branch, features)
 	end
+end
+
+
+function ml.tree(features, labels)
+	local tree = build(concat(features, labels))
+
+	obj = {
+		tree = tree,
+		run = function(features)
+			return run(tree, features)
+		end
+	}
+
+	return obj
 end
 
 return ml

@@ -1,5 +1,7 @@
+-- import
 local ml = require "ml"
 
+-- Data
 local features = {
 	{"Sol", "Quente", "Elevada", "Fraco"},
 	{"Sol", "Quente", "Elevada", "Forte"},
@@ -40,11 +42,12 @@ local labels = {"Nao", "Nao", "Sim", "Sim", "Sim", "Nao", "Sim", "Nao", "Sim", "
 --
 -- local labels = {"None", "Premium", "Basic", "Basic", "Premium", "None", "Basic", "Premium", "None", "None", "None", "None", "Basic", "None", "Basic", "Basic"}
 
-local obs = {"Sol", "Quente", "Elevada", "Forte"}
-
+-- Examples
 local tree = ml.tree(features, labels)
 
-local a = ml.run(tree, obs)
+local a = tree.run({"Sol", "Quente", "Elevada", "Forte"})
+
+-- local a = tree.run({"(direct)", "USA", "yes", 5})
 
 for k, v in pairs(a) do
 	print(k)
