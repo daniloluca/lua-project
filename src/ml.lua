@@ -16,6 +16,26 @@ function concat(a, b)
 	return a
 end
 
+function getLabels(rows)
+	local set = {}
+	for k, row in pairs(rows) do
+		if set[row[#row]] == nil then
+			set[row[#row]] = 0
+		end
+		set[row[#row]] = set[row[#row]] + 1
+	end
+	return set
+end
+
+function quantify(rows)
+	local labels = getLabels(rows)
+	local set = {}
+	for k, v in pairs(labels) do
+		set[#set+1] = v
+	end
+	return set
+end
+
 function entropy(set)
 	local entr = 0
 	for key, value in pairs(set) do
@@ -84,32 +104,15 @@ function divide(node, branch, cond)
 	return sett, setf
 end
 
-function gain(s, a)
-	return info(s) - info(a)
-end
-
-function quantify(rows)
-	local set = {}
-	for k, row in pairs(rows) do
-		if set[row[#row]] == nil then
-			set[row[#row]] = 0
-		end
-		set[row[#row]] = set[row[#row]] + 1
-	end
-
-	local _set = {}
-	for k, v in pairs(set) do
-		_set[#_set+1] = v
-	end
-
-	return _set
-end
-
 function build(rows)
-	local set_s = quantify(rows)
+	if #rows == 0 then
+		return {}
+	end
+
+	local current_score = info(quantify(rows))
 
 	local best_gain = 0
-  	local best_criteria
+  	local best_criteria = {}
   	local best_sets = {}
 
 	for col=1, #rows[1]-1 do
@@ -119,26 +122,59 @@ function build(rows)
 			column_values[row[col]] = 1
 		end
 
-		local set_a = {}
 		for key, value in pairs(column_values) do
 			local set1, set2 = divide(rows, col, key)
 
-			set_a[#set_a+1] = quantify(set1)
-		end
+			local p = #set1/#rows
+			local gain = current_score-p*info(quantify(set1))-(1-p)*info(quantify(set2))
 
-		local g = gain(set_s, set_a)
-		if g > best_gain then
-			best_gain = g
+			if gain > best_gain and #set1 > 0 and #set2 > 0 then
+				best_gain = gain
+				best_criteria = {col, key}
+				best_sets = {set1, set2}
+			end
 		end
 	end
 
-	print(best_gain)
-
-	return features
+	if best_gain > 0 then
+		return {
+			col = best_criteria[1],
+			value = best_criteria[2],
+			tb = build(best_sets[1]),
+			fb = build(best_sets[2])
+		}
+	else
+		return {
+			results = getLabels(rows)
+		}
+	end
 end
 
 function ml.tree(features, labels)
 	return build(concat(features, labels))
+end
+
+function ml.run(tree, features)
+	if tree.results ~= nil then
+		return tree.results
+	else
+		local v = features[tree.col]
+		local branch = {}
+		if type(v) == "number" then
+			if v >= tree.value then
+				branch = tree.tb
+			else
+				branch = tree.fb
+			end
+		else
+			if v == tree.value then
+				branch = tree.tb
+			else
+				branch = tree.fb
+			end
+		end
+		return ml.run(branch, features)
+	end
 end
 
 return ml

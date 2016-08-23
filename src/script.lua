@@ -1,66 +1,51 @@
 local ml = require "ml"
 
 local features = {
-	{"Sunny", "Hot", "High", "False"},
-	{"Sunny", "Hot", "High", "True"},
-	{"Overcast", "Hot", "High", "False"},
-	{"Rainy", "Mild", "High", "False"},
-	{"Rainy", "Cool", "Normal", "False"},
-	{"Rainy", "Cool", "Normal", "True"},
-	{"Overcast", "Cool", "Normal", "True"},
-	{"Sunny", "Mild", "High", "False"},
-	{"Sunny", "Cool", "Normal", "False"},
-	{"Rainy", "Mild", "Normal", "False"},
-	{"Sunny", "Mild", "Normal", "True"},
-	{"Overcast", "Mild", "High", "True"},
-	{"Overcast", "Hot", "Normal", "False"},
-	{"Rainy", "Mild", "High", "True"}
+	{"Sol", "Quente", "Elevada", "Fraco"},
+	{"Sol", "Quente", "Elevada", "Forte"},
+	{"Nuvens", "Quente", "Elevada", "Fraco"},
+	{"Chuva", "Ameno", "Elevada", "Fraco"},
+	{"Chuva", "Fresco", "Normal", "Fraco"},
+	{"Chuva", "Fresco", "Normal", "Forte"},
+	{"Nuvens", "Fresco", "Normal", "Forte"},
+	{"Sol", "Ameno", "Elevada", "Fraco"},
+	{"Sol", "Fresco", "Normal", "Fraco"},
+	{"Chuva", "Ameno", "Normal", "Fraco"},
+	{"Sol", "Ameno", "Normal", "Forte"},
+	{"Nuvens", "Ameno", "Elevada", "Forte"},
+	{"Nuvens", "Quente", "Naormal", "Fraco"},
+	{"Chuva", "AmeNao", "Elevada", "Forte"}
 }
 
-local labels = {"No", "No", "Yes", "Yes", "Yes", "No", "Yes", "No", "Yes", "Yes", "Yes", "Yes", "Yes", "No"}
+local labels = {"Nao", "Nao", "Sim", "Sim", "Sim", "Nao", "Sim", "Nao", "Sim", "Sim", "Sim", "Sim", "Sim", "Nao"}
 
-function print_t(t)
-	local s = {"return {\n"}
-	for i=1,#t do
-	  s[#s+1] = "  {"
-	  for j=1,#t[i] do
-	    s[#s+1] = t[i][j]
-	    s[#s+1] = ","
-	  end
-	  s[#s+1] = "},\n"
-	end
-	s[#s+1] = "}"
-	s = table.concat(s)
-
-	print(s)
-end
-
-function print_k(t)
-	print("{")
-	for k, v in pairs(t) do
-		print("  " .. k .. ": " .. v .. ",")
-	end
-	print("}")
-end
-
-function print_d(data)
-	for ki, vi in pairs(data) do
-		print("-> "..ki)
-		for kj, vj in pairs(vi) do
-			print("  -> "..kj)
-			for kz, vz in pairs(vj) do
-				print("    ->"..vz)
-			end
-		end
-	end
-end
-
--- output
--- local a, b = ml.divide(features, 1, "Sunny")
+-- local features = {
+-- 	{"slashdot", "USA", "yes", 18},
+-- 	{"google", "France", "yes", 23},
+-- 	{"digg", "USA", "yes", 24},
+-- 	{"kiwitobes", "France", "yes", 23},
+-- 	{"google", "UK", "no", 21},
+-- 	{"(direct)", "New Zealand", "no", 12},
+-- 	{"(direct)", "UK", "no", 21},
+-- 	{"google", "USA", "no", 24},
+-- 	{"slashdot", "France", "yes", 19},
+-- 	{"digg", "USA", "no", 18},
+-- 	{"google", "UK", "no", 18},
+-- 	{"kiwitobes", "UK", "no", 19},
+-- 	{"digg", "New Zealand", "yes", 12},
+-- 	{"slashdot", "UK", "no", 21},
+-- 	{"google", "UK", "yes", 18},
+-- 	{"kiwitobes", "France", "yes", 19}
+-- }
 --
--- print_t(a)
--- print_t(b)
+-- local labels = {"None", "Premium", "Basic", "Basic", "Premium", "None", "Basic", "Premium", "None", "None", "None", "None", "Basic", "None", "Basic", "Basic"}
 
-local a = ml.tree(features, labels)
+local obs = {"Sol", "Quente", "Elevada", "Forte"}
 
--- print_d(a)
+local tree = ml.tree(features, labels)
+
+local a = ml.run(tree, obs)
+
+for k, v in pairs(a) do
+	print(k)
+end
