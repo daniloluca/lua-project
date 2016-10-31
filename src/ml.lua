@@ -150,7 +150,7 @@ function build(table)
 	end
 end
 
-function run(tree, features)
+function classify(tree, features)
 	if tree.result ~= nil then
 		return tree.result
 	else
@@ -169,7 +169,7 @@ function run(tree, features)
 				branch = tree.false_b
 			end
 		end
-		return run(branch, features)
+		return classify(branch, features)
 	end
 end
 
@@ -179,8 +179,8 @@ function ml.tree(features, labels)
 
 	obj = {
 		tree = tree,
-		run = function(features)
-			return run(tree, features)
+		classify = function(features)
+			return classify(tree, features)
 		end
 	}
 

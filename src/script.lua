@@ -45,9 +45,9 @@ local labels = {"Nao", "Nao", "Sim", "Sim", "Sim", "Nao", "Sim", "Nao", "Sim", "
 -- Examples
 local tree = ml.tree(features, labels)
 
-local a = tree.run({"Sol", "Quente", "Elevada", "Forte"})
+local a = tree.classify({"Sol", "Quente", "Elevada", "Forte"})
 
--- local a = tree.run({"(direct)", "USA", "yes", 5})
+-- local a = tree.classify({"(direct)", "USA", "yes", 5})
 
 for k, v in pairs(a) do
 	print(k)
